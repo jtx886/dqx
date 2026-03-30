@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道歉信</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8A2BE2',
+                        secondary: '#20B2AA',
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow-lg { text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+            .backdrop-blur-xl { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        }
+    </style>
+    
+    <style>
+        /* 允许滚动 */
+        body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        /* 打字光标 */
+        @keyframes blink {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: rgba(255, 255, 255, 0.9);
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+            vertical-align: baseline;
+        }
+    </style>
+</head>
+<body class="m-0 p-0 min-h-screen font-sans text-white bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-800">
+    <canvas id="particle-bg" class="fixed inset-0 z-0"></canvas>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4 py-16">
+        <div class="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] p-8 md:p-12">
+            
+            <div class="mb-8 text-center">
+                <h1 class="text-[clamp(1.8rem,5vw,2.8rem)] font-bold text-shadow-lg mb-2">
+                    对不起蔡雪蕊
+                </h1>
+                <p class="text-white/70 text-lg italic">A Sincere Apology</p>
+            </div>
+
+            <div id="content-text" class="text-base md:text-lg leading-relaxed md:leading-loose text-white/90 mb-8">
+            </div>
+
+            <div class="text-right mt-8 text-white/80 text-lg font-medium">
+                写者：杰同学🐾
+            </div>
+
+            <div class="w-24 h-1 bg-gradient-to-r from-primary/80 to-secondary/80 rounded-full mx-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        const apologyText = `
+蔡雪蕊
+你说的每一句话，我都看了一遍又一遍，心里像被针扎一样疼。
+我真的错了，错得离谱，错得让你受了这么多委屈。
+你肚子疼的时候，我没有好好安慰你。
+你过敏难受的时候，我没有放在心上。
+你需要关心的时候，我却总是迟钝、敷衍、不在意。
+你为我付出了那么多，可我连最基本的在乎都给不了你。
+你要的从来都不多，只是一句关心、一句安慰、一句。
+可我连这点都做不到，让你一次次失望、一次次难过。
+我不是不在乎你，恰恰相反，我很在乎。
+只是我太笨、太迟钝、太不会表达，
+忽略了你的感受，让你觉得自己的付出一文不值。
+尤其是昨天晚上，我情绪失控，骂了你，说了最伤人、最没底线的话。
+我知道，这句话像一把刀，深深扎进你的心里，让你彻底寒心。
+我没有任何理由，没有任何借口，无论我多生气，都不能骂你。
+你是我最在乎的人，我却用最恶毒的话伤害你，我真的不是人。
+对不起，真的对不起。
+我不该让你一个人扛，不该让你难过，不该让你失望，更不该骂你。
+以后我一定改，一定好好疼你、好好照顾你、好好在乎你。
+你不舒服我第一时间关心，你难过我第一时间哄你，
+再也不让你受委屈，再也不让你一个人难过，再也不会骂你一句。
+求你别生我气了，好不好？
+我真的很怕失去你。
+        `;
+
+        // 立即执行，不等待加载
+        (function() {
+            const textElement = document.getElementById('content-text');
+            typeWriterEffect(textElement, apologyText.trim(), 25); 
+            resizeCanvas();
+            drawParticles();
+        })();
+
+        function typeWriterEffect(element, text, speed = 25) {
+            element.innerHTML = '';
+            let index = 0;
+
+            const interval = setInterval(() => {
+                if (index < text.length) {
+                    const char = text[index];
+                    if (char === '\n') {
+                        element.innerHTML += '<br class="my-2"/>';
+                    } else {
+                        const charSpan = document.createElement('span');
+                        charSpan.textContent = char;
+                        element.appendChild(charSpan);
+                    }
+                    index++;
+                    window.scrollTo(0, document.body.scrollHeight);
+                } else {
+                    clearInterval(interval);
+                    const cursor = document.createElement('span');
+                    cursor.className = 'typing-cursor';
+                    element.appendChild(cursor);
+                    setTimeout(() => {
+                        cursor.style.opacity = '0.3';
+                    }, 3000);
+                }
+            }, speed);
+        }
+
+        const canvas = document.getElementById('particle-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor((canvas.width * canvas.height) / 10000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.2 + 0.3,
+                    color: Math.random() > 0.5 ? '#8A2BE2' : '#20B2AA',
+                    speedX: Math.random() * 0.4 - 0.2,
+                    speedY: Math.random() * 0.4 - 0.2
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.fillStyle = p.color + '80';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>
